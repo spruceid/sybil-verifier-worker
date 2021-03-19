@@ -60,7 +60,8 @@ export async function handleVerify(request) {
         // tweetID
         if (
             decodedSybilList[account] &&
-            decodedSybilList[account]?.twitter?.tweetID === tweetID
+            decodedSybilList[account].twitter &&
+            decodedSybilList[account].twitter.tweetID === tweetID
         ) {
             response = new Response(
                 decodedSybilList[account].twitter.handle,

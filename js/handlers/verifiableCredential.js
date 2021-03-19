@@ -18,7 +18,6 @@ export async function handleVerifiableCredential(request) {
         let vc = await VERIFIABLE_CREDENTIAL_STORE.get(account)
         if (vc) {
             try {
-                let vcObj = JSON.parse(vc)
                 response = new Response(vc, {
                     status: 200,
                 })
@@ -37,12 +36,11 @@ export async function handleVerifiableCredential(request) {
         let sybilMap = await sybilRes.json()
 
         if (sybilMap && typeof sybilMap === 'object' && sybilMap[account]) {
-            let vcObj = await makeVerifiableCredential(
+            let vc = await makeVerifiableCredential(
                 account,
                 ISSUER_ADDRESS,
                 sybilMap[account]
             )
-            vc = JSON.stringify(vcObj)
             await VERIFIABLE_CREDENTIAL_STORE.put(account, vc)
 
             response = new Response(vc, {
@@ -122,12 +120,11 @@ async function makeEthVc(subjectAddress, doc) {
 
     const keyType = { kty: 'EC', crv: 'secp256k1', alg: 'ES256K-R' }
 
-    let prepStr
     try {
         const { completeIssueCredential, prepareIssueCredential } = wasm_bindgen
         await wasm_bindgen(wasm)
 
-        prepStr = await prepareIssueCredential(
+        let prepStr = await prepareIssueCredential(
             credentialString,
             JSON.stringify(proofOptions),
             JSON.stringify(keyType)
@@ -158,7 +155,7 @@ async function makeEthVc(subjectAddress, doc) {
             signature
         )
 
-        return JSON.parse(vcStr)
+        return vcStr
     } catch (err) {
         throw 'Failed in credential preperation'
         return
