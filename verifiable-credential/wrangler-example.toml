@@ -1,4 +1,4 @@
-name = "sybil-verifier"
+name = "sybil-verifiable-credential"
 type = "rust"
 account_id = "<your cloudlare account id here>"
 # Add namespace via wrangler

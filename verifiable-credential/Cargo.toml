@@ -28,8 +28,12 @@ wasm-bindgen-test = "0.2"
 [lib]
 crate-type = ["cdylib"]
 
-[package.metadata.wasm-pack.profile.release]
-wasm-opt = false
+[package.release]
+lto = true
+opt-level = 3
+
+# [package.metadata.wasm-pack.profile.release]
+# wasm-opt = false
 
 [features]
 default = ["generate", "issue", "verify"]
