@@ -17,6 +17,7 @@ export async function handleVerifiableCredential(request) {
     try {
         let vc = await VERIFIABLE_CREDENTIAL_STORE.get(account)
         if (vc) {
+            JSON.parse(vc)
             try {
                 response = new Response(vc, {
                     status: 200,
