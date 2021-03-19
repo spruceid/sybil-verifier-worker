@@ -76,8 +76,7 @@ export async function makeVerifiableCredential(
         {
             sameAs: 'https://www.w3.org/TR/owl-ref/#sameAs-def',
             SybilVerification: {
-                '@id':
-                    `https://github.com/${REPO_OWNER}/sybil-list#verifying-an-identity`,
+                '@id': `https://github.com/${REPO_OWNER}/sybil-list#verifying-an-identity`,
                 '@context': {
                     sybil: {
                         '@id': `https://github.com/${REPO_OWNER}/sybil-list#schema`,

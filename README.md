@@ -54,9 +54,11 @@ $ npm install
 #### Configure Wrangler
 
 You must create a file `wrangler.toml` with your cloudflare app information. See [wrangler-example.toml](./wrangler-example.toml) for setup. To get started,
+
 ```bash
 $ cp wrangler-example.toml wrangler.toml
 ```
+
 Then add your Cloudflare account id to the `account_id` field.
 
 Next, create a [kv_namespace](https://developers.cloudflare.com/workers/learning/how-kv-works) called `VERIFIABLE_CREDENTIAL_STORE` by running:

@@ -18,9 +18,9 @@ export async function handleVerify(request) {
     const USER_AGENT = 'Cloudflare Worker'
 
     // format request for twitter api
-    var requestHeaders = new Headers()
+    let requestHeaders = new Headers()
     requestHeaders.append('Authorization', 'Bearer ' + TWITTER_BEARER)
-    var requestOptions = {
+    let requestOptions = {
         method: 'GET',
         headers: requestHeaders,
         redirect: 'follow',
@@ -37,6 +37,44 @@ export async function handleVerify(request) {
         const { searchParams } = new URL(request.url)
         let tweetID = searchParams.get('id')
         let account = searchParams.get('account')
+
+        // check if this connection has already been saved
+        const fileName = 'verified.json'
+        const githubPath = `/repos/${REPO_OWNER}/sybil-list/contents/`
+
+        const fileInfo = await fetch(
+            'https://api.github.com' + githubPath + fileName,
+            {
+                headers: {
+                    Authorization: 'token ' + GITHUB_AUTHENTICATION,
+                    'User-Agent': USER_AGENT,
+                },
+            }
+        )
+        const fileJSON = await fileInfo.json()
+        const sha = fileJSON.sha
+
+        // Decode the String as json object
+        let decodedSybilList = JSON.parse(atob(fileJSON.content))
+        // check if there is an exisiting entry and if so, if the entry is pointing to the same
+        // tweetID
+        if (
+            decodedSybilList[account] &&
+            decodedSybilList[account]?.twitter?.tweetID === tweetID
+        ) {
+            response = new Response(
+                decodedSybilList[account].twitter.handle,
+                init,
+                {
+                    status: 200,
+                    statusText: 'Succesful verification',
+                }
+            )
+
+            response.headers.set('Access-Control-Allow-Origin', '*')
+            response.headers.append('Vary', 'Origin')
+            return response
+        }
 
         // get tweet data from twitter api
         const twitterURL = `https://api.twitter.com/2/tweets?ids=${tweetID}&expansions=author_id&user.fields=username`
@@ -112,23 +150,6 @@ export async function handleVerify(request) {
             })
         }
 
-        const fileName = 'verified.json'
-        const githubPath = `/repos/${REPO_OWNER}/sybil-list/contents/`
-
-        const fileInfo = await fetch(
-            'https://api.github.com' + githubPath + fileName,
-            {
-                headers: {
-                    Authorization: 'token ' + GITHUB_AUTHENTICATION,
-                    'User-Agent': USER_AGENT,
-                },
-            }
-        )
-        const fileJSON = await fileInfo.json()
-        const sha = fileJSON.sha
-
-        // Decode the String as json object
-        var decodedSybilList = JSON.parse(atob(fileJSON.content))
         decodedSybilList[formattedSigner] = {
             twitter: {
                 timestamp: Date.now(),
