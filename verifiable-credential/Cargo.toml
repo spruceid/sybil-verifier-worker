@@ -13,12 +13,12 @@ rand = { version = "0.7", features = ["wasm-bindgen"] }
 chrono = { version = "0.4", features = ["wasmbind"] }
 
 [dependencies.didkit]
-path = "../didkit/lib"
+path = "../../didkit/lib"
 default-features = false
 features = ["wasm"]
 
 [dependencies.ssi]
-path = "../ssi"
+path = "../../ssi"
 default-features = false
 features = ["ed25519-dalek", "sha2", "rsa", "rand", "libsecp256k1", "p256"]
 
